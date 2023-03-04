@@ -1,3 +1,5 @@
+package closestPoint;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.Duration;
@@ -46,7 +48,7 @@ public class ClosestPointsCalculatorTest {
 	}
 
 	/**
-	 * Tests the ClosestPointsCalculator.findClosestPairOfPoints with random points
+	 * Tests the closestPoint.ClosestPointsCalculator.findClosestPairOfPoints with random points
 	 * against a brute force oracle. Times out if the algorithm takes too long to
 	 * possibly be in the right big-O range, but the default timeout is pretty
 	 * generous, so it won't catch every problem with a working implementation.

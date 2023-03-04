@@ -1,3 +1,5 @@
+package closestPoint;
+
 public record Point(int x, int y) {
 
 	public final double distanceTo(Point point) {
