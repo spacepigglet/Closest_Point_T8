@@ -73,7 +73,9 @@ public class ClosestPointsCalculator {
 		Point[] minPair = new Point[2];
 		for (int i = 0; i < stripPoints.size() - 1; i++) { //-1 to skip last loop where nothing will be done
 			for (int j = i + 1; j < stripPoints.size(); j++) {
-				if (distance(stripPoints.get(i), stripPoints.get(j)) < minDelta) {
+				if(stripPoints.get(i).y()-stripPoints.get(j).y() > minDelta){
+					break;
+				} else if (distance(stripPoints.get(i), stripPoints.get(j)) < minDelta) {
 					minDelta = distance(stripPoints.get(i), stripPoints.get(j));
 					minPair[0] = stripPoints.get(i);
 					minPair[1] = stripPoints.get(j);
