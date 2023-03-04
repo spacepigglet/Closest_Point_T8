@@ -103,6 +103,7 @@ public class ClosestPointsCalculator {
 		return minPair;
 	}
 
+	//call with x list????
 	private static List<Point> findPointsInStrip(List<Point> yPoints, double delta, double middleX) {
 
 		List<Point> stripPoints = new ArrayList<>();
