@@ -1,3 +1,4 @@
+//Amanda Sjöberg amsj1785, Jessica Borg jesbo0161
 import java.util.*;
 
 public class ClosestPointsCalculator {
@@ -9,51 +10,51 @@ public class ClosestPointsCalculator {
 			return new Point[0]; //no pairs exist!
 		}
 
-		List<Point> xSortedPoints = new ArrayList<>(Arrays.asList(points));
-		sortByX(xSortedPoints);
-		List<Point> ySortedPoints = new ArrayList<>(xSortedPoints);
-		sortByY(ySortedPoints);
+		List<Point> pointsSortedByX = new ArrayList<>(Arrays.asList(points));
+		sortByX(pointsSortedByX);
+		List<Point> pointsSortedByY = new ArrayList<>(pointsSortedByX);
+		sortByY(pointsSortedByY);
 
-		return findClosest(xSortedPoints, ySortedPoints);
+		return findClosest(pointsSortedByX, pointsSortedByY);
 	}
 
 	private static void sortByX(List<Point> points) {
 		//O(n*log(n)) merge sort
-		Collections.sort(points, (p1, p2) -> p1.x() - p2.x());
+		Collections.sort(points, (pointA, pointB) -> pointA.x() - pointB.x());
 	}
 
 	private static void sortByY(List<Point> points) {
 		//O(n*log(n)) merge sort
-		Collections.sort(points, (p1, p2) -> p1.y() - p2.y());
+		Collections.sort(points, (pointA, pointB) -> pointA.y() - pointB.y());
 	}
 
-	private static double distance(Point p1, Point p2) {
-		return p1.distanceTo(p2);
+	private static double distance(Point pointA, Point pointB) {
+		return pointA.distanceTo(pointB);
 	}
 
-	private static Point[] findClosest(List<Point> xSortedPoints, List<Point> ySortedPoints) {
-		if (xSortedPoints.size() <= HALT) {
-			return bruteForceApproach(xSortedPoints);
+	private static Point[] findClosest(List<Point> pointsByX, List<Point> pointsByY) {
+		if (pointsByX.size() <= HALT) {
+			return bruteForceApproach(pointsByX);
 		}
-		int middle = xSortedPoints.size() / 2;
-		List<Point> xSortedLeft = xSortedPoints.subList(0, middle);
-		List<Point> ySortedLeft = new ArrayList<>();
+		int middle = pointsByX.size() / 2;
+		List<Point> sortedXLeft = pointsByX.subList(0, middle);
+		List<Point> sortedYLeft = new ArrayList<>();
 
-		List<Point> xSortedRight = xSortedPoints.subList(middle, xSortedPoints.size());
-		List<Point> ySortedRight = new ArrayList<>();
+		List<Point> sortedXRight = pointsByX.subList(middle, pointsByX.size());
+		List<Point> sortedYRight = new ArrayList<>();
 
 		//divide y sorted list into left/right by x-value
-		for(Point p : ySortedPoints){
-			if(p.x() < xSortedPoints.get(middle).x()){
-				ySortedLeft.add(p);
+		for(Point p : pointsByY){
+			if(p.x() < pointsByX.get(middle).x()){
+				sortedYLeft.add(p);
 			} else {
-				ySortedRight.add(p);
+				sortedYRight.add(p);
 			}
 		}
 
 		//find closest pair in right half and left half
-		Point[] deltaLeftPair = findClosest(xSortedLeft, ySortedLeft);
-		Point[] deltaRightPair = findClosest(xSortedRight, ySortedRight);
+		Point[] deltaLeftPair = findClosest(sortedXLeft, sortedYLeft);
+		Point[] deltaRightPair = findClosest(sortedXRight, sortedYRight);
 
 		double deltaLeft = distance(deltaLeftPair[0], deltaLeftPair[1]);
 		double deltaRight = distance(deltaRightPair[0], deltaRightPair[1]);
@@ -61,7 +62,7 @@ public class ClosestPointsCalculator {
 		double delta = Math.min(deltaLeft, deltaRight);
 
 		//important to send in ySorted as it needs to be y-sorted to find minDeltaPair
-		List<Point> stripPoints = findPointsInStrip(ySortedPoints, delta, xSortedPoints.get(middle).x());
+		List<Point> stripPoints = findPointsInStrip(pointsByY, delta, pointsByX.get(middle).x());
 
 		//finds the closest pair overall, else null
 		Point[] minDeltaPair = minDeltaInStrip(stripPoints, delta);
@@ -96,17 +97,17 @@ public class ClosestPointsCalculator {
 		return minPair;
 	}
 
-	private static Point[] bruteForceApproach(List<Point> xSortedPoints) {
+	private static Point[] bruteForceApproach(List<Point> sortedXPoints) {
 		double minDistance = Double.MAX_VALUE;
 		Point[] minPair = new Point[2];
 
-		for (int i = 0; i < xSortedPoints.size() - 1; i++) { //-1 to skip last loop where nothing will be done
-			for (int j = i + 1; j < xSortedPoints.size(); j++) {
-				if (distance(xSortedPoints.get(i), xSortedPoints.get(j)) < minDistance) {
-					minDistance = distance(xSortedPoints.get(i), xSortedPoints.get(j));
+		for (int i = 0; i < sortedXPoints.size() - 1; i++) { //-1 to skip last loop where nothing will be done
+			for (int j = i + 1; j < sortedXPoints.size(); j++) {
+				if (distance(sortedXPoints.get(i), sortedXPoints.get(j)) < minDistance) {
+					minDistance = distance(sortedXPoints.get(i), sortedXPoints.get(j));
 
-					minPair[0] = xSortedPoints.get(i);
-					minPair[1] = xSortedPoints.get(j);
+					minPair[0] = sortedXPoints.get(i);
+					minPair[1] = sortedXPoints.get(j);
 				}
 			}
 		}
@@ -114,13 +115,13 @@ public class ClosestPointsCalculator {
 	}
 
 
-	private static List<Point> findPointsInStrip(List<Point> ySortedPoints, double delta, double middleX) {
+	private static List<Point> findPointsInStrip(List<Point> sortedYPoints, double delta, double middleX) {
 
 		List<Point> stripPoints = new ArrayList<>();
-		for (Point ySortedPoint : ySortedPoints) {
+		for (Point p : sortedYPoints) {
 			//if the point is closer to the vertical middle than delta, then add
-			if (Math.abs(ySortedPoint.x() - middleX) < delta) {
-				stripPoints.add(ySortedPoint);
+			if (Math.abs(p.x() - middleX) < delta) {
+				stripPoints.add(p);
 			}
 		}
 		return stripPoints; //not returning clone... possible issue?
