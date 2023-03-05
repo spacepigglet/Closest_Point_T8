@@ -14,31 +14,17 @@ public class ClosestPointsCalculator {
 		List<Point> ySortedPoints = new ArrayList<>(xSortedPoints);
 		sortByY(ySortedPoints);
 
-
-		//divide into left and right sublists
-		//List<Point> xSortedLeft = xSortedPoints.subList(0, xSortedPoints.size()/2);
-		//List<Point> xListRight = xSortedPoints.subList(xSortedPoints.size()/2, xSortedPoints.size());
-
-
 		return findClosest(xSortedPoints, ySortedPoints);
 	}
 
 	private static void sortByX(List<Point> points) {
-		Collections.sort(points, new Comparator<>() { //O(n*log(n)) modified merge sort
-			@Override
-			public int compare(Point p1, Point p2) {
-				return p1.x() - p2.x();
-			}
-		});
+		//O(n*log(n)) merge sort
+		Collections.sort(points, (p1, p2) -> p1.x() - p2.x());
 	}
 
 	private static void sortByY(List<Point> points) {
-		Collections.sort(points, new Comparator<>() { //O(n*log(n)) modified merge sort
-			@Override
-			public int compare(Point p1, Point p2) {
-				return p1.y() - p2.y();
-			}
-		});
+		//O(n*log(n)) merge sort
+		Collections.sort(points, (p1, p2) -> p1.y() - p2.y());
 	}
 
 	private static double distance(Point p1, Point p2) {
@@ -56,7 +42,7 @@ public class ClosestPointsCalculator {
 		List<Point> xSortedRight = xSortedPoints.subList(middle, xSortedPoints.size());
 		List<Point> ySortedRight = new ArrayList<>();
 
-		//divide y sorted lists into left/right by x-value
+		//divide y sorted list into left/right by x-value
 		for(Point p : ySortedPoints){
 			if(p.x() < xSortedPoints.get(middle).x()){
 				ySortedLeft.add(p);
@@ -65,17 +51,21 @@ public class ClosestPointsCalculator {
 			}
 		}
 
+		//find closest pair in right half and left half
 		Point[] deltaLeftPair = findClosest(xSortedLeft, ySortedLeft);
 		Point[] deltaRightPair = findClosest(xSortedRight, ySortedRight);
 
 		double deltaLeft = distance(deltaLeftPair[0], deltaLeftPair[1]);
 		double deltaRight = distance(deltaRightPair[0], deltaRightPair[1]);
+		//shortest distance of the two pairs
 		double delta = Math.min(deltaLeft, deltaRight);
 
 		//important to send in ySorted as it needs to be y-sorted to find minDeltaPair
 		List<Point> stripPoints = findPointsInStrip(ySortedPoints, delta, xSortedPoints.get(middle).x());
 
+		//finds the closest pair overall, else null
 		Point[] minDeltaPair = minDeltaInStrip(stripPoints, delta);
+
 		if (minDeltaPair[0] == null) {
 			if (delta == deltaLeft) {
 				return deltaLeftPair;
@@ -127,10 +117,10 @@ public class ClosestPointsCalculator {
 	private static List<Point> findPointsInStrip(List<Point> ySortedPoints, double delta, double middleX) {
 
 		List<Point> stripPoints = new ArrayList<>();
-		for (int i = 0; i < ySortedPoints.size(); i++) {
+		for (Point ySortedPoint : ySortedPoints) {
 			//if the point is closer to the vertical middle than delta, then add
-			if (Math.abs(ySortedPoints.get(i).x() - middleX) < delta) {
-				stripPoints.add(ySortedPoints.get(i));
+			if (Math.abs(ySortedPoint.x() - middleX) < delta) {
+				stripPoints.add(ySortedPoint);
 			}
 		}
 		return stripPoints; //not returning clone... possible issue?
