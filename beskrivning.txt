@@ -1,0 +1,28 @@
+Vi använder en rekursiv divide and conquer-algoritm för att lösa closest-point problemet.
+
+Vi börjar med att kontrollera antal punkter i arrayen som kommer in. Om det finns färre än 2 punkter finns det ju inget par av punkter.
+Vi undviker även nullpointer exceptions som skulle uppstå senare i körningen.
+
+Vi börjar med att göra två listor av punkter. En som sorteras enligt x-led och den andra sorteras enligt y-led.
+Vi använder Collections.sort som är en modifierad merge-sort och körs därmed på O(NlogN) tid.
+Den rekursiva metoden kallas på med våra sorterade listor.
+
+Den delar rekursivt upp listorna i hälften tills vårt stoppvillkor möts.
+Uppdelningen sker efter x-led så y-sorterade listor måste även dom delas upp efter x-led, då höger- respektive vänsterlistor måste innehålla samma punkter.
+Vi valde en storlek på 3 som stoppvillkor, då det är så långt vi kan gå. Om listan är 3 lång kan vi ju inte dela igen för då skulle en listan endast ha en punkt och då går det inte att hitta ett par.
+Så om listan är 2 eller 3 lång körs brute force-lösningen.
+
+Eftersom den rekursiva metoden ska hitta de två punkterna närmast varandra (inte avståndet) så räknas avståndet fram igen för att jämföra högerpar och vänsterpar för att hitta de par som har minst avstånd (delta).
+Sedan måste mittenremsan av punkter tas fram (mha y-sorterad lista) för att se om det finns ett par över linjen som är närmare varandra än det vi redan har hittat.
+Vi använder den y-sorterade mittenremsa-listan för att hitta det minsta paret i mittenremsan.
+Eftersom att mittenremsa-listan är y-sorterad så kan vi kolla om skillnaden i y-led är större än delta, och då bryts den inre loopen (vilket funkar då vi har kollat alla relevanta punkter) och den yttre loopen går vidare. Detta innebär vi max behöver kolla 7 punkter för varje punkt.
+Detta borde ge vår lösning en O(NlogN) tidskomplexitet.
+
+När vi tar fram mittenremsa-par kommer endast ett par som har mindre avstånd än delta att tas fram. Annars returneras en array med null-värden.
+Om vårt mittenremsa-par inte är null så vet vi att det är vårt minsta par, vilket returneras.
+Annars så vet vi att det är paret som tidigare togs fram på högersida/vänstersida som är det par med minst avstånd och det returneras.
+
+
+
+
+
