@@ -9,7 +9,8 @@ public class ClosestPointsCalculator {
 
 		List<Point> xSortedPoints = new ArrayList<>(Arrays.asList(points));
 		sortByX(xSortedPoints);
-		List<Point> yPoints = new ArrayList<>(xSortedPoints);
+		List<Point> ySortedPoints = new ArrayList<>(xSortedPoints);
+		sortByY(ySortedPoints);
 
 
 		//divide into left and right sublists
@@ -17,14 +18,23 @@ public class ClosestPointsCalculator {
 		//List<Point> xListRight = xSortedPoints.subList(xSortedPoints.size()/2, xSortedPoints.size());
 
 
-		return findClosest(xSortedPoints, yPoints);
+		return findClosest(xSortedPoints, ySortedPoints);
 	}
 
 	private static void sortByX(List<Point> points) {
-		Collections.sort(points, new Comparator<>() {
+		Collections.sort(points, new Comparator<>() { //O(n*log(n)) modified merge sort
 			@Override
 			public int compare(Point p1, Point p2) {
 				return p1.x() - p2.x();
+			}
+		});
+	}
+
+	private static void sortByY(List<Point> points) {
+		Collections.sort(points, new Comparator<>() { //O(n*log(n)) modified merge sort
+			@Override
+			public int compare(Point p1, Point p2) {
+				return p1.y() - p2.y();
 			}
 		});
 	}
@@ -35,6 +45,7 @@ public class ClosestPointsCalculator {
 
 	private static Point[] findClosest(List<Point> xSortedPoints, List<Point> yPoints) {
 		if (xSortedPoints.size() < HALT) {
+
 			return bruteForceApproach(xSortedPoints);
 		}
 		int middle = xSortedPoints.size() / 2;
@@ -67,6 +78,7 @@ public class ClosestPointsCalculator {
 		return minDeltaPair;
 
 	}
+
 
 	private static Point[] minDeltaInStrip(List<Point> stripPoints, double delta) {
 		double minDelta = delta;
